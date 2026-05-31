@@ -21,12 +21,12 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Run Selenium Tests') {
             steps {
+                // This creates the 'allure-results' folder
                 bat 'mvn test'
             }
         }
-
 
         // --- UPDATED SECTION: Allure Report Generation ---
         stage('Generate Allure Report') {
@@ -42,17 +42,16 @@ pipeline {
         }
     }
 
-    }
-
     post {
         always {
             junit 'target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: 'screenshots/*.png', allowEmptyArchive: true
         }
         success {
-            echo 'Tests passed!'
+            echo 'Tests passed successfully!'
         }
         failure {
-            echo 'Tests failed!'
+            echo 'Tests failed. Check the Allure report.'
         }
     }
 }
